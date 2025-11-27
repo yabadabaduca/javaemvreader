@@ -28,9 +28,9 @@ public class Log {
 
     public static final int INDENT_SIZE = 2;
     
-    private static AtomicInteger stepNo = new AtomicInteger(1);
-    private static PrintWriter printWriter = null;
-    private static Level level = Level.INFO;
+    private static final AtomicInteger stepNo = new AtomicInteger(1);
+    private static volatile PrintWriter printWriter = null;
+    private static volatile Level level = Level.INFO;
 
     public enum Level {
 
@@ -46,7 +46,10 @@ public class Log {
         }
     }
 
-    public static void setLevel(Level level) {
+    public static synchronized void setLevel(Level level) {
+        if (level == null) {
+            throw new IllegalArgumentException("Level cannot be null");
+        }
         Log.level = level;
     }
 
@@ -83,28 +86,34 @@ public class Log {
                 + "\n"+COMMAND_HEADER_FRAMING, Level.COMMAND);
     }
 
-    private static void logInternal(String msg, Level level) {
-        if (level.getValue() >= Log.level.getValue()) {
-            if (printWriter != null) {
-                printWriter.println(msg);
-                printWriter.flush();
+    private static synchronized void logInternal(String msg, Level level) {
+        if (msg == null) {
+            msg = "null";
+        }
+        Level currentLevel = Log.level; // Read volatile once
+        if (level.getValue() >= currentLevel.getValue()) {
+            PrintWriter writer = printWriter; // Read volatile once
+            if (writer != null) {
+                writer.println(msg);
+                writer.flush();
             } else {
                 System.out.println(msg);
             }
         }
     }
 
-    public static void setPrintWriter(PrintWriter printWriter) {
+    public static synchronized void setPrintWriter(PrintWriter printWriter) {
         if (printWriter == null) {
             throw new IllegalArgumentException("Parameter 'printWriter' cannot be null");
         }
         Log.printWriter = printWriter;
     }
 
-    public static PrintWriter getPrintWriter() {
-        if (printWriter == null) {
+    public static synchronized PrintWriter getPrintWriter() {
+        PrintWriter writer = printWriter; // Read volatile once
+        if (writer == null) {
             return new PrintWriter(System.out);
         }
-        return printWriter;
+        return writer;
     }
 }

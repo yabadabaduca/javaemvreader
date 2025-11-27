@@ -36,10 +36,21 @@ public class CardExplorer {
     //Declare SmartCard here, so in case some exception is thrown, we can still try to dump all the information we found
     SmartCard smartCard = null;
 
+    /**
+     * Gets the EMV card that was processed.
+     * 
+     * @return The SmartCard object, or null if no card was processed
+     */
     public SmartCard getEMVCard(){
         return smartCard;
     }
 
+    /**
+     * Starts the card exploration process.
+     * Connects to a card, initializes the session, and processes all EMV applications.
+     * 
+     * @throws TerminalException if there's an error connecting to the terminal or card
+     */
     public void start() {
         //Add test keys so we can read and validate acquirer test cards (DO NOT use this if validating production cards only!)
         CA.addFromXmlFile("/certificationauthorities_test.xml");
@@ -126,8 +137,9 @@ public class CardExplorer {
                     session.testGetChallenge();
 
                 } catch(Exception e) {
-                    e.printStackTrace(System.err);
-                    Log.info(String.format("Error processing app: %s. Skipping app: %s", e.getMessage(), app.toString()));
+                    String errorMsg = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+                    Log.info(String.format("Error processing app: %s. Skipping app: %s", errorMsg, app != null ? app.toString() : "null"));
+                    Log.debug(Util.getStackTrace(e));
                     continue;
                 }
             }
@@ -138,24 +150,29 @@ public class CardExplorer {
             Log.info("\n");
             //See the finally clause
         } catch (TerminalException ex) {
-            ex.printStackTrace(System.err);
-            Log.info(ex.toString());
+            Log.info("Terminal error: " + ex.getMessage());
+            Log.debug(Util.getStackTrace(ex));
         } catch (UnsupportedCardException ex) {
-            System.err.println("Unsupported card: " + ex.getMessage());
-            Log.info(ex.toString());
+            Log.info("Unsupported card: " + ex.getMessage());
             if (cardConnection != null) {
-                System.err.println("ATR: " + Util.prettyPrintHexNoWrap(cardConnection.getATR()));
-                System.err.println(ATR_DB.searchATR(cardConnection.getATR()));
+                Log.info("ATR: " + Util.prettyPrintHexNoWrap(cardConnection.getATR()));
+                java.util.List<String> atrInfo = ATR_DB.searchATR(cardConnection.getATR());
+                if (atrInfo != null && !atrInfo.isEmpty()) {
+                    Log.info(String.join("\n", atrInfo));
+                } else {
+                    Log.info("No ATR information found");
+                }
             }
         } catch (SmartCardException ex) {
-            ex.printStackTrace(System.err);
-            Log.info(ex.toString());
+            Log.info("Smart card error: " + ex.getMessage());
+            Log.debug(Util.getStackTrace(ex));
         } finally {
             if (cardConnection != null){
                 try{
                     cardConnection.disconnect(true);
                 }catch(TerminalException ex){
-                    ex.printStackTrace(System.err);
+                    Log.debug("Error disconnecting card: " + ex.getMessage());
+                    Log.debug(Util.getStackTrace(ex));
                 }
             }
             if (smartCard != null) {
@@ -170,7 +187,8 @@ public class CardExplorer {
                     Log.getPrintWriter().println("---------------------------------------");
                     Log.getPrintWriter().flush();
                 } catch (RuntimeException ex) {
-                    ex.printStackTrace(System.err);
+                    Log.info("Error dumping card data: " + ex.getMessage());
+                    Log.debug(Util.getStackTrace(ex));
                 }
                 Log.info("");
             } else if (cardConnection != null) {

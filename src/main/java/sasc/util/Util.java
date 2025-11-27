@@ -781,20 +781,20 @@ public class Util {
 //        
 //        System.out.println(Util.byteArrayToLong(Util.fromHexString("7f ff ff ff ff ff ff ff"), 0, 8));
 //        System.out.println(Util.byteArrayToLong(Util.fromHexString("22 18 09 04 0b 00 e0 30 23 07 00 00 00 42 d2 85 4e 23 07 00 00 00 00 21 69 42"), 13, 4));
-        System.out.println("1.2.840.114283.1 : " + decodeOID(Util.fromHexString("2a 86 48 86 fc 6b 01")));
-        System.out.println("1.2.840.114283.2.2.1.1 : " + decodeOID(Util.fromHexString("2a 86 48 86 fc 6b 02 02 01 01")));
-        System.out.println("1.2.840.114283.4.XXXX : " + decodeOID(Util.fromHexString("2a 86 48 86 fc 6b 04 02 15"))); //JCOP 31
-        System.out.println("1.2.840.114283.4.XXXX : " + decodeOID(Util.fromHexString("2a 86 48 86 fc 6b 04 01 05"))); //JCOP 31
+        // Debug/test code - commented out to avoid System.out.println in production
+        // System.out.println("1.2.840.114283.1 : " + decodeOID(Util.fromHexString("2a 86 48 86 fc 6b 01")));
+        // System.out.println("1.2.840.114283.2.2.1.1 : " + decodeOID(Util.fromHexString("2a 86 48 86 fc 6b 02 02 01 01")));
+        // System.out.println("1.2.840.114283.4.XXXX : " + decodeOID(Util.fromHexString("2a 86 48 86 fc 6b 04 02 15"))); //JCOP 31
+        // System.out.println("1.2.840.114283.4.XXXX : " + decodeOID(Util.fromHexString("2a 86 48 86 fc 6b 04 01 05"))); //JCOP 31
         
-        System.out.println("Sun Microsystems : " + decodeOID(Util.fromHexString("2b 06 01 04 01 2a 02 6e 01 02")));
-        System.out.println("Unknown : " + decodeOID(Util.fromHexString("2b 85 10 86 48 64 02 01 03")));
-        System.out.println("{2 100 3} : " + decodeOID(Util.fromHexString("813403")));
-        
-        System.out.println(Util.prettyPrintHexNoWrap(Util.resizeArray(new byte[]{0x01}, 0)));
-        System.out.println(Util.prettyPrintHexNoWrap(Util.resizeArray(new byte[]{0x01}, 1)));
-        System.out.println(Util.prettyPrintHexNoWrap(Util.resizeArray(new byte[]{0x01}, 2)));
-        
-        System.out.println(Util.prettyPrintHexNoWrap(Util.resizeArray(new byte[]{0x01, 0x02}, 1)));
-        System.out.println(Util.prettyPrintHexNoWrap(Util.resizeArray(new byte[]{0x01, 0x02}, 4)));
+        // Debug/test code - commented out to avoid System.out.println in production
+        // System.out.println("Sun Microsystems : " + decodeOID(Util.fromHexString("2b 06 01 04 01 2a 02 6e 01 02")));
+        // System.out.println("Unknown : " + decodeOID(Util.fromHexString("2b 85 10 86 48 64 02 01 03")));
+        // System.out.println("{2 100 3} : " + decodeOID(Util.fromHexString("813403")));
+        // System.out.println(Util.prettyPrintHexNoWrap(Util.resizeArray(new byte[]{0x01}, 0)));
+        // System.out.println(Util.prettyPrintHexNoWrap(Util.resizeArray(new byte[]{0x01}, 1)));
+        // System.out.println(Util.prettyPrintHexNoWrap(Util.resizeArray(new byte[]{0x01}, 2)));
+        // System.out.println(Util.prettyPrintHexNoWrap(Util.resizeArray(new byte[]{0x01, 0x02}, 1)));
+        // System.out.println(Util.prettyPrintHexNoWrap(Util.resizeArray(new byte[]{0x01, 0x02}, 4)));
     }
 }

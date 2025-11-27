@@ -1,5 +1,25 @@
 changelog
 
+v0.6.1
+Improvements:
+Updated project to Java 17 (from Java 1.6)
+Updated Maven plugins to latest versions (compiler 3.11.0, release 3.0.1, resources 3.3.1, surefire 3.1.2, shade 3.5.0, jarsigner 3.0.0)
+Updated dependencies: commons-cli 1.5.0, JUnit 4.13.2
+Added SLF4J logging support (slf4j-api 2.0.9, slf4j-simple 2.0.9)
+Improved thread-safety in Log.java (volatile fields, synchronized methods)
+Replaced System.out.println and printStackTrace with proper logging
+Improved exception handling throughout the codebase
+Added input validation for null parameters and array bounds
+Added JavaDoc documentation for main classes and methods
+Improved command-line interface: added short options (-h, -v, -t)
+Updated project URLs from Google Code to GitHub
+Removed/commented Java Web Start (JNLP) support (not compatible with Java 11+)
+Bugfixes:
+Fixed deprecated Class.newInstance() → getDeclaredConstructor().newInstance()
+Fixed deprecated GnuParser → DefaultParser
+Fixed type mismatch in CardExplorer.java (List<String> to String conversion)
+Fixed command-line option parsing (--help and -h now work correctly)
+
 v0.6.0
 Improvements:
 More refactoring work

@@ -20,6 +20,8 @@ import sasc.terminal.CardConnection;
 import sasc.terminal.Terminal;
 import sasc.terminal.TerminalException;
 import sasc.terminal.TerminalProvider;
+import sasc.util.Log;
+import sasc.util.Util;
 
 /**
  * Reflection Wrapper
@@ -48,14 +50,16 @@ public class SmartcardioTerminalProvider implements TerminalProvider {
             // this will throw an exception if "JSR-268 Java Smart Card I/O API" is missing
             Class.forName("javax.smartcardio.TerminalFactory");
             Class c = Class.forName(implementationClassName);
-            terminalProvider = (TerminalProvider) (c.newInstance());
+            // Updated: Class.newInstance() is deprecated since Java 9, use getDeclaredConstructor().newInstance() instead
+            terminalProvider = (TerminalProvider) (c.getDeclaredConstructor().newInstance());
             isSmartcardIOAvailable = true;
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace(System.err);
-        } catch (InstantiationException ex) {
-            ex.printStackTrace(System.err);
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace(System.err);
+            // SmartcardIO not available on this platform - this is expected on some systems
+            Log.debug("SmartcardIO not available: " + ex.getMessage());
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | java.lang.reflect.InvocationTargetException ex) {
+            // Failed to instantiate terminal provider
+            Log.debug("Failed to initialize SmartcardIO terminal provider: " + ex.getMessage());
+            Log.debug(Util.getStackTrace(ex));
         }
     }
     
@@ -69,36 +73,69 @@ public class SmartcardioTerminalProvider implements TerminalProvider {
 
     @Override
     public List<Terminal> listTerminals() throws TerminalException {
+        if (terminalProvider == null) {
+            throw new TerminalException("SmartcardIO terminal provider not available");
+        }
         return terminalProvider.listTerminals();
     }
 
     @Override
     public CardConnection connectAnyTerminal() throws TerminalException {
+        if (terminalProvider == null) {
+            throw new TerminalException("SmartcardIO terminal provider not available");
+        }
         return terminalProvider.connectAnyTerminal();
     }
     
     @Override
     public CardConnection connectAnyTerminalWithCardPresent(String protocol) throws TerminalException {
+        if (terminalProvider == null) {
+            throw new TerminalException("SmartcardIO terminal provider not available");
+        }
+        if (protocol == null) {
+            throw new IllegalArgumentException("Protocol cannot be null");
+        }
         return terminalProvider.connectAnyTerminalWithCardPresent(protocol);
     }
     
     @Override
     public CardConnection connectAnyTerminal(String protocol) throws TerminalException {
+        if (terminalProvider == null) {
+            throw new TerminalException("SmartcardIO terminal provider not available");
+        }
+        if (protocol == null) {
+            throw new IllegalArgumentException("Protocol cannot be null");
+        }
         return terminalProvider.connectAnyTerminal(protocol);
     }
 
     @Override
     public CardConnection connectTerminal(String name) throws TerminalException {
+        if (terminalProvider == null) {
+            throw new TerminalException("SmartcardIO terminal provider not available");
+        }
+        if (name == null) {
+            throw new IllegalArgumentException("Terminal name cannot be null");
+        }
         return terminalProvider.connectTerminal(name);
     }
 
     @Override
     public CardConnection connectTerminal(int index) throws TerminalException {
+        if (terminalProvider == null) {
+            throw new TerminalException("SmartcardIO terminal provider not available");
+        }
+        if (index < 0) {
+            throw new IllegalArgumentException("Terminal index cannot be negative: " + index);
+        }
         return terminalProvider.connectTerminal(index);
     }
 
     @Override
     public String getProviderInfo() {
+        if (terminalProvider == null) {
+            return "SmartcardIO not available";
+        }
         return terminalProvider.getProviderInfo();
     }
 }
