@@ -40,7 +40,7 @@ Automatically add Le if missing
 Added support for Internal Auth response containing RESPONSE_MESSAGE_TEMPLATE_2 (based on a patch by bgillis)
 Get PC/SC error code description, if available
 Bugfixes:
-Fixed bug in TerminalVerificationResults returing wrong array length, causing GPO to fail
+Fixed bug in TerminalVerificationResults returning wrong array length, causing GPO to fail
 Fixed bug in the handling of verifyPIN response (based on a patch by bgillis)
 
 v0.5.2
@@ -88,10 +88,10 @@ Added logic to gracefully handle the case where no PCSC terminals are found
 Added option to submit a bug report if the application terminates unexpectedly
 
 v0.2.0
-fixed bug in Status Word byte to short conversion
-fixed bug in TLV length parsing when length was 0x80
-fixed bug when stripping leading and trailing 0x00/0xff from TLV data
-implemented SignedDynamicApplicationData
-implemented track 2 service code parsing
-implemented Issuer Identifier Number (BIN) lookup
-separated generic iso7816 commands from emv specific commands
+Fixed bug in Status Word byte to short conversion
+Fixed bug in TLV length parsing when length was 0x80
+Fixed bug when stripping leading and trailing 0x00/0xff from TLV data
+Implemented SignedDynamicApplicationData
+Implemented track 2 service code parsing
+Implemented Issuer Identifier Number (BIN) lookup
+Separated generic iso7816 commands from emv specific commands
